@@ -90,6 +90,7 @@ const Calendar = (props) => {
 
   const monthOptionsJSX = months.map((itemMonth, index) => (
     <option
+      key={itemMonth}
       value={index}
       selected={index.toString() === month.toString()}
     >
@@ -126,6 +127,7 @@ Calendar.propTypes = {
   editReminder: PropTypes.func.isRequired,
   removeReminder: PropTypes.func.isRequired,
   removeReminders: PropTypes.func.isRequired,
+  setMonth: PropTypes.func.isRequired,
   reminders: PropTypes.shape({}).isRequired,
   month: PropTypes.number.isRequired,
   year: PropTypes.number.isRequired,

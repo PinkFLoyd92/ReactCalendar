@@ -146,6 +146,7 @@ const EditReminder = (props) => {
     setEnd(evt.target.value);
   };
 
+  const errorNote = (reminderState.note || '').length > 30;
 
   return (
     <React.Fragment>
@@ -164,6 +165,8 @@ Date:
           <DialogContentText>
             <div>
               <Input
+                error={errorNote}
+                id="nota"
                 onChange={handleChange}
                 defaultValue={note}
                 className={classes.input}
