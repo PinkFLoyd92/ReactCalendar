@@ -66,15 +66,19 @@ const EditReminder = (props) => {
   const [fullWidth, ] = React.useState(true);
   const [maxWidth, ] = React.useState('lg');
   const [weather, setWeather] = useState(null);
+  const [loadingWeather, setLoadingWeather] = useState(false);
 
   const fetchWeather = async (q) => {
     try {
+      setLoadingWeather(true);
       const weatherObj = await WeatherAPI.get({
         q,
       });
       setWeather(weatherObj.data.list[0]);
     } catch (err) {
       console.error(err);
+    } finally {
+      setLoadingWeather(false);
     }
   };
 
@@ -244,8 +248,8 @@ Date:
           <form className={classes.form} noValidate />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleSubmit} color="primary">
-            Submit
+          <Button onClick={handleSubmit} color="primary" disabled={loadingWeather}>
+            {loadingWeather ? 'Fetching weather...' : 'Submit'}
           </Button>
           <Button onClick={handleClose} color="primary">
             Close

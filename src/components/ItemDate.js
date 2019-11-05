@@ -25,7 +25,8 @@ const useStyles = makeStyles({
   },
   cardEmpty: {
     minWidth: 10,
-    filter: 'blur(0.7px)'
+    filter: 'blur(0.7px)',
+    overflowX: 'auto',
   },
   title: {
     fontSize: 12,
@@ -94,8 +95,8 @@ const ItemDate = (props) => {
     return (
       <Chip
         styles={{
-            backgroundColor: color
-          }}
+          backgroundColor: color
+        }}
         label={`${start} - ${end} / ${city} `}
         variant="outlined"
         onDelete={() => {
@@ -108,6 +109,10 @@ const ItemDate = (props) => {
     );
   });
 
+  const openDialog = () => {
+    setOpenDate(keyDate, true);
+  };
+
   if (month !== date.getUTCMonth()) {
     return (
       <Card className={classes.cardEmpty}>
@@ -115,17 +120,31 @@ const ItemDate = (props) => {
           <Typography className={classes.title} color="textSecondary" gutterBottom>
             {date.getUTCDate()}
           </Typography>
+          {remindersJSX}
         </CardContent>
         <CardActions>
-          <Button size="small" />
+          <IconButton
+            onClick={openDialog}
+            aria-label="add"
+            className={classes.margin}
+          >
+            <AddIcon />
+          </IconButton>
+          <Tooltip title="Remove all the reminders from current date">
+            <IconButton
+              onClick={() => {
+                removeReminders(keyDate);
+              }}
+              aria-label="delete"
+              className={classes.margin}
+            >
+              <DeleteIcon />
+            </IconButton>
+          </Tooltip>
         </CardActions>
       </Card>
     );
   }
-
-  const openDialog = () => {
-    setOpenDate(keyDate, true);
-  };
 
   return (
     <Card className={classes.card}>
@@ -166,9 +185,13 @@ ItemDate.propTypes = {
   type: PropTypes.oneOf(['date', 'header']),
   reminders: PropTypes.arrayOf(PropTypes.shape({})),
   month: PropTypes.number,
+  removeReminders: PropTypes.func,
+  removeReminder: PropTypes.func,
 };
 
 ItemDate.defaultProps = {
+  removeReminder: () => {},
+  removeReminders: () => {},
   name: null,
   type: 'header',
   reminders: [],

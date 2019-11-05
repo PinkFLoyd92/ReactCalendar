@@ -42,7 +42,7 @@ const Calendar = (props) => {
   } = props;
 
   const changeMonth = (evt) => {
-    setMonth(Number.parseInt(evt.target.value))
+    setMonth(Number.parseInt(evt.target.value));
   };
 
   const classes = useStyles();
@@ -51,6 +51,9 @@ const Calendar = (props) => {
 
   const weekDays = DAYS.map(dayName => (
     <Col
+      xs={1}
+      lg={1}
+      md={1}
       key={dayName}
     >
       <ItemDate
@@ -67,7 +70,12 @@ const Calendar = (props) => {
       const remindersFiltered = reminders[keyDate] || [];
 
       return (
-        <Col key={keyDate}>
+        <Col
+          xs={1}
+          lg={1}
+          md={1}
+          key={keyDate}
+        >
           <ItemDate
             month={month}
             type="date"
@@ -102,9 +110,10 @@ const Calendar = (props) => {
     <EditReminderProvider>
       <React.Fragment>
         <label htmlFor="month">Select month: </label>
-        <select id="month"
-                onChange={changeMonth}
-                >
+        <select
+          id="month"
+          onChange={changeMonth}
+        >
           {monthOptionsJSX}
         </select>
         <Container fluid>
