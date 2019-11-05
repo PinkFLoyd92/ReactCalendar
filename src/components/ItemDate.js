@@ -21,7 +21,7 @@ const useStyles = makeStyles({
   card: {
     minWidth: 100,
     maxWidth: 200,
-    overflow: 'overlay',
+    overflowX: 'auto',
   },
   cardEmpty: {
     minWidth: 10,

@@ -2,6 +2,9 @@
 
 # PROJECT CALENDAR
 
+Checkout the deployed App!
+[App Link](http://pinkfloyd92.github.io/ReactCalendar/)
+
 ## Requirements
 
 For development, you will only need Node.js installed on your environement.

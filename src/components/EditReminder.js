@@ -166,7 +166,7 @@ Date:
             <div>
               <Input
                 error={errorNote}
-                id="nota"
+                id="note"
                 onChange={handleChange}
                 defaultValue={note}
                 className={classes.input}
