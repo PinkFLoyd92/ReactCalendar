@@ -1,12 +1,18 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import PropTypes from 'prop-types';
 
 import { makeStyles } from '@material-ui/core/styles';
-import Grid from '@material-ui/core/Grid';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Container from 'react-bootstrap/Container';
+import { EditReminderProvider, EditReminderContext } from './EditReminderContext';
+import EditReminder from './EditReminder';
 
-const SIZE = 35;
+import { getDaysInMonth, formatDate } from '../helpers/dateHelper';
 
-const useStyles = makeStyles(theme => ({
+import ItemDate from './ItemDate';
+
+const useStyles = makeStyles(() => ({
   root: {
     flexGrow: 1,
   },
@@ -20,22 +26,78 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const Calendar = props => {
+const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+const Calendar = (props) => {
+  const {
+    month,
+    year,
+    addReminder,
+    reminders,
+  } = props;
   const classes = useStyles();
 
+  const monthDates = getDaysInMonth(month, year);
+
+  const weekDays = DAYS.map(dayName => (
+    <Col
+      key={dayName}
+    >
+      <ItemDate
+        type="header"
+        name={dayName}
+      />
+    </Col>
+  ));
+
+  const childrenItems = ([...new Array(5)]).map((i, index) => {
+    const months = monthDates.slice(index * 7, (index + 1) * 7);
+    const monthsJSX = months.map((date) => {
+      const keyDate = formatDate(date);
+      const remindersFiltered = reminders[keyDate] || [];
+
+      return (
+        <Col key={keyDate}>
+          <ItemDate
+            month={month}
+            type="date"
+            date={date}
+            keyDate={keyDate}
+            reminders={remindersFiltered}
+          />
+        </Col>
+      );
+    });
+
     return (
-    <Grid container className={classes.root} spacing={2}>
-
-        </Grid>
-
+      <Row key={i}>
+        { monthsJSX }
+      </Row>
     );
+  });
+
+  return (
+    <EditReminderProvider>
+      <React.Fragment>
+      <Container>
+        <Row>
+          {weekDays}
+        </Row>
+        {childrenItems}
+      </Container>
+      <EditReminder
+        addReminder={addReminder}
+        />
+      </React.Fragment>
+    </EditReminderProvider>
+  );
 };
 
 Calendar.propTypes = {
-
-};
-
-Calendar.defaultProps = {
+  addReminder: PropTypes.func.isRequired,
+  reminders: PropTypes.shape({}).isRequired,
+  month: PropTypes.number.isRequired,
+  year: PropTypes.number.isRequired,
 };
 
 export default React.memo(Calendar);
