@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
@@ -9,8 +9,10 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Input from '@material-ui/core/Input';
 import swal from 'sweetalert';
 import { TwitterPicker } from 'react-color';
-
+import { useDebounce } from 'use-debounce';
 import TextField from '@material-ui/core/TextField';
+import { WeatherAPI } from '../rest-api';
+
 import 'rc-time-picker/assets/index.css';
 import useEditReminder from './useEditReminder';
 
@@ -60,8 +62,28 @@ const EditReminder = (props) => {
     editReminder
   } = props;
 
+  const [valueWeather] = useDebounce(city, 1000);
   const [fullWidth, ] = React.useState(true);
   const [maxWidth, ] = React.useState('lg');
+  const [weather, setWeather] = useState(null);
+
+  const fetchWeather = async (q) => {
+    try {
+      const weatherObj = await WeatherAPI.get({
+        q,
+      });
+      setWeather(weatherObj.data.list[0]);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+
+  useEffect(() => {
+    if (valueWeather && valueWeather !== '') {
+      fetchWeather(valueWeather);
+    }
+  }, [valueWeather]);
 
   const handleClose = () => {
     reset();
@@ -197,6 +219,23 @@ Date:
                 color={color}
                 onChangeComplete={handleColorChange}
               />
+            </div>
+            <div>
+              Weather:
+              {' '}
+              {weather && weather.main.temp}
+              {' '}
+              <br />
+              Descriptions:
+              {' '}
+              {weather && weather.weather[0].main}
+              {' '}
+              <br />
+              Descriptions:
+              {' '}
+              {weather && weather.weather[0].description}
+              {' '}
+              <br />
             </div>
           </DialogContentText>
           <form className={classes.form} noValidate />
