@@ -9,7 +9,8 @@ const EditReminderProvider = (props) => {
     end: '7:30',
     date: null,
     note: '',
-    city: ''
+    city: '',
+    color: '',
   });
 
   const { children } = props;

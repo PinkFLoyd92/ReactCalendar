@@ -8,10 +8,13 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Input from '@material-ui/core/Input';
 import swal from 'sweetalert';
+import { TwitterPicker } from 'react-color';
 
 import TextField from '@material-ui/core/TextField';
 import 'rc-time-picker/assets/index.css';
 import useEditReminder from './useEditReminder';
+
+const uuidv4 = require('uuid/v4');
 
 const useStyles = makeStyles(theme => ({
   form: {
@@ -49,9 +52,12 @@ const EditReminder = (props) => {
     setNote,
     setOpen,
     editMode,
+    color,
+    setColor,
   } = useEditReminder();
   const {
-    addReminder
+    addReminder,
+    editReminder
   } = props;
 
   const [fullWidth, ] = React.useState(true);
@@ -65,20 +71,41 @@ const EditReminder = (props) => {
     setCity(e.target.value);
   };
 
+  const handleColorChange = ({ hex }) => {
+    setColor(hex);
+  };
+
   const handleSubmit = async () => {
     if (note
        && start
        && end
         && city
         && !editMode
-       ) {
+    ) {
       await addReminder(date, {
         note: reminderState.note,
         start: reminderState.start,
         end: reminderState.end,
         city: reminderState.city,
+        color: reminderState.color,
+        uuid: uuidv4(),
       });
 
+      setOpen(false);
+    } else if (editMode
+              && note
+       && start
+       && end
+        && city
+    ) {
+      await editReminder(date, {
+        note: reminderState.note,
+        start: reminderState.start,
+        end: reminderState.end,
+        city: reminderState.city,
+        uuid: reminderState.uuid,
+        color: reminderState.color,
+      });
       setOpen(false);
     } else {
       swal('Error', 'Faltan items por seleccionar', 'error');
@@ -90,11 +117,11 @@ const EditReminder = (props) => {
   };
 
   const onUpdateTimeStart = (evt) => {
-    setStart(evt.target.value)
+    setStart(evt.target.value);
   };
 
   const onUpdateTimeEnd = (evt) => {
-    setEnd(evt.target.value)
+    setEnd(evt.target.value);
   };
 
 
@@ -165,6 +192,12 @@ Date:
               }}
               onChange={onUpdateTimeEnd}
             />
+            <div>
+              <TwitterPicker
+                color={color}
+                onChangeComplete={handleColorChange}
+              />
+            </div>
           </DialogContentText>
           <form className={classes.form} noValidate />
         </DialogContent>

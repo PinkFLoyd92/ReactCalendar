@@ -8,23 +8,30 @@ import CardContent from '@material-ui/core/CardContent';
 import CardActions from '@material-ui/core/CardActions';
 import Button from '@material-ui/core/Button';
 import Chip from '@material-ui/core/Chip';
+import DeleteIcon from '@material-ui/icons/Delete';
+import AddIcon from '@material-ui/icons/Add';
+import IconButton from '@material-ui/core/IconButton';
+import Tooltip from '@material-ui/core/Tooltip';
 import useEditReminder from './useEditReminder';
 
-
 const useStyles = makeStyles({
+  smallLabels: {
+    fontSize: '0.7em'
+  },
   card: {
-    minWidth: 10,
-    maxWidth: 100,
+    minWidth: 100,
+    maxWidth: 200,
+    overflow: 'overlay',
   },
   cardEmpty: {
     minWidth: 10,
-    filter: 'blur(1px)'
+    filter: 'blur(0.7px)'
   },
   title: {
     fontSize: 12,
   },
   pos: {
-    marginBottom: 12,
+    marginBottom: 20,
   },
 });
 
@@ -36,7 +43,9 @@ const ItemDate = (props) => {
     reminders,
     date,
     keyDate,
-    month
+    month,
+    removeReminders,
+    removeReminder,
   } = props;
 
   const {
@@ -73,18 +82,25 @@ const ItemDate = (props) => {
   });
 
   const editReminder = (reminder) => {
-    setOpenEditMode(reminder);
+    setOpenEditMode(keyDate, reminder);
   };
 
 
   const remindersJSX = reminders.map((itemReminder) => {
     const {
-      start, end, date, note, city
+      start, end, date, note, city, color,
     } = itemReminder;
+
     return (
       <Chip
-        label={`${city} - ${start} : ${end}`}
+        styles={{
+            backgroundColor: color
+          }}
+        label={`${start} - ${end} / ${city} `}
         variant="outlined"
+        onDelete={() => {
+          removeReminder(keyDate, itemReminder);
+        }}
         onClick={() => {
           editReminder(itemReminder);
         }}
@@ -120,7 +136,24 @@ const ItemDate = (props) => {
         {remindersJSX}
       </CardContent>
       <CardActions>
-        <Button size="small" onClick={openDialog}>+</Button>
+        <IconButton
+          onClick={openDialog}
+          aria-label="add"
+          className={classes.margin}
+        >
+          <AddIcon />
+        </IconButton>
+        <Tooltip title="Remove all the reminders from current date">
+          <IconButton
+            onClick={() => {
+              removeReminders(keyDate);
+            }}
+            aria-label="delete"
+            className={classes.margin}
+          >
+            <DeleteIcon />
+          </IconButton>
+        </Tooltip>
       </CardActions>
     </Card>
   );

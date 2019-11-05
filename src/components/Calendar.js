@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 
 import { makeStyles } from '@material-ui/core/styles';
@@ -27,14 +27,24 @@ const useStyles = makeStyles(() => ({
 }));
 
 const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+const months = [...new Array(12).fill(1)];
 
 const Calendar = (props) => {
   const {
     month,
     year,
     addReminder,
+    editReminder,
+    removeReminder,
+    removeReminders,
+    setMonth,
     reminders,
   } = props;
+
+  const changeMonth = (evt) => {
+    setMonth(Number.parseInt(evt.target.value))
+  };
+
   const classes = useStyles();
 
   const monthDates = getDaysInMonth(month, year);
@@ -64,6 +74,8 @@ const Calendar = (props) => {
             date={date}
             keyDate={keyDate}
             reminders={remindersFiltered}
+            removeReminder={removeReminder}
+            removeReminders={removeReminders}
           />
         </Col>
       );
@@ -76,17 +88,33 @@ const Calendar = (props) => {
     );
   });
 
+  const monthOptionsJSX = months.map((itemMonth, index) => (
+    <option
+      value={index}
+      selected={index.toString() === month.toString()}
+    >
+      {index + 1}
+    </option>
+  ));
+
   return (
     <EditReminderProvider>
       <React.Fragment>
-      <Container>
-        <Row>
-          {weekDays}
-        </Row>
-        {childrenItems}
-      </Container>
-      <EditReminder
-        addReminder={addReminder}
+        <label htmlFor="month">Select month: </label>
+        <select id="month"
+                onChange={changeMonth}
+                >
+          {monthOptionsJSX}
+        </select>
+        <Container fluid>
+          <Row>
+            {weekDays}
+          </Row>
+          {childrenItems}
+        </Container>
+        <EditReminder
+          addReminder={addReminder}
+          editReminder={editReminder}
         />
       </React.Fragment>
     </EditReminderProvider>
@@ -95,6 +123,9 @@ const Calendar = (props) => {
 
 Calendar.propTypes = {
   addReminder: PropTypes.func.isRequired,
+  editReminder: PropTypes.func.isRequired,
+  removeReminder: PropTypes.func.isRequired,
+  removeReminders: PropTypes.func.isRequired,
   reminders: PropTypes.shape({}).isRequired,
   month: PropTypes.number.isRequired,
   year: PropTypes.number.isRequired,

@@ -36,13 +36,18 @@ const useEditReminder = () => {
     setState(state => ({ ...state, note: value }));
   };
 
+  const setColor = (value) => {
+    setState(state => ({ ...state, color: value }));
+  };
+
   const reset = () => {
     setState(state => ({}));
   };
 
-  const setOpenEditMode = (reminder) => {
+  const setOpenEditMode = (date, reminder) => {
     setState(state => ({
       ...reminder,
+      date,
       editMode: true,
       isOpen: true,
     }));
@@ -67,6 +72,8 @@ const useEditReminder = () => {
     start: state.start,
     end: state.end,
     editMode: state.editMode,
+    color: state.color,
+    setColor,
   };
 };
 
